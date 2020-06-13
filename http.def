@@ -1,0 +1,5 @@
+LIBRARY http.dll
+
+EXPORTS
+Release
+Get
