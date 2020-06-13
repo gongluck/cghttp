@@ -8,6 +8,7 @@
 package main
 
 import (
+	"io/ioutil"
 	"net/http"
 	"reflect"
 	"unsafe"
@@ -39,22 +40,7 @@ func Get(url *C.char, body **C.char, bodylen *C.size_t) C.int {
 		return -1
 	}
 
-	var tmp string
-	blocklen := respon.ContentLength
-	if blocklen <= 0 {
-		blocklen = 1024
-	}
-	buf := make([]byte, blocklen)
-
-	defer respon.Body.Close()
-	for {
-		n, _ := respon.Body.Read(buf)
-		if n == 0 {
-			break
-		}
-		tmp += string(buf[:n])
-	}
-
+	tmp, _ := ioutil.ReadAll(respon.Body)
 	*bodylen = (C.size_t)(len(tmp))
 	*body = (*C.char)(C.malloc(C.size_t(*bodylen)))
 	C.memcpy(unsafe.Pointer(*body), unsafe.Pointer((*reflect.StringHeader)(unsafe.Pointer(&tmp)).Data), *bodylen)
