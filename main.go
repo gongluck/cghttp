@@ -8,9 +8,12 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"reflect"
+	"sync"
+	"time"
 	"unsafe"
 )
 
@@ -40,18 +43,42 @@ func Get(url *C.char, body **C.char, bodylen *C.size_t) C.int {
 		return -1
 	}
 
-	tmp, _ := ioutil.ReadAll(respon.Body)
-	*bodylen = (C.size_t)(len(tmp))
-	*body = (*C.char)(C.malloc(C.size_t(*bodylen)))
-	C.memcpy(unsafe.Pointer(*body), unsafe.Pointer((*reflect.StringHeader)(unsafe.Pointer(&tmp)).Data), *bodylen)
+	if body != nil || bodylen != nil {
+		tmp, _ := ioutil.ReadAll(respon.Body)
+		if bodylen != nil {
+			*bodylen = (C.size_t)(len(tmp))
+		}
+		if body != nil {
+			bodysize := (C.size_t)(len(tmp))
+			*body = (*C.char)(C.malloc(bodysize))
+			C.memcpy(unsafe.Pointer(*body), unsafe.Pointer((*reflect.StringHeader)(unsafe.Pointer(&tmp)).Data), bodysize)
+		}
+	}
 
 	return C.int(respon.StatusCode)
 }
 
+func test_get() {
+	var body *C.char
+	var bodylen C.size_t
+	C.Get(C.CString("https://www.baidu.com"), &body, &bodylen)
+	//C.puts(body)
+	C.Release(&body)
+	wg.Done()
+}
+
+var (
+	TESTTIMES = 1000
+	wg        sync.WaitGroup
+)
+
 func main() {
-	// var body *C.char
-	// var bodylen C.size_t
-	// C.Get(C.CString("http://www.gongluck.icu/web/"), &body, &bodylen)
-	// C.puts(body)
-	// C.Release(&body)
+	t1 := time.Now()
+	for i := 0; i < TESTTIMES; i++ {
+		wg.Add(1)
+		go test_get()
+	}
+	wg.Wait()
+	t2 := time.Now()
+	fmt.Println(t2.Sub(t1))
 }

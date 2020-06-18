@@ -16,6 +16,7 @@
 
 .vs
 .vscode
+build
 Debug
 x64
 
