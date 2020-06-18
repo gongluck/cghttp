@@ -2,7 +2,7 @@
  * @Author: gongluck
  * @Date: 2020-06-12 11:18:45
  * @Last Modified by: gongluck
- * @Last Modified time: 2020-06-18 17:27:18
+ * @Last Modified time: 2020-06-18 18:49:47
  */
 
 package main
@@ -102,14 +102,14 @@ func Post(posturl *C.char, keys **C.char, values **C.char, keynum C.size_t, resp
 }
 
 var (
-	TESTTIMES = 1000
+	TESTTIMES = 100
 	wg        sync.WaitGroup
 )
 
 func test_get() {
 	var body *C.char
 	var bodylen C.size_t
-	C.Get(C.CString("https://www.baidu.com"), &body, &bodylen)
+	C.Get(C.CString("http://www.gongluck.icu/web/"), &body, &bodylen)
 	//C.puts(body)
 	C.Release(&body)
 	wg.Done()
@@ -120,7 +120,7 @@ func test_post() {
 	value := C.CString("testpost")
 	var body *C.char
 	var bodylen C.size_t
-	C.Post(C.CString("http://47.115.57.81/api/postvideo"), &key, &value, 1, &body, &bodylen)
+	C.Post(C.CString("http://www.gongluck.icu/api/postvideo"), &key, &value, 1, &body, &bodylen)
 	//C.puts(body)
 	C.Release(&body)
 	wg.Done()

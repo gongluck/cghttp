@@ -9,6 +9,8 @@
 #include <time.h>
 
 #include <thread>
+#include <mutex>
+std::mutex g_mutex;
 
 #include "../cghttp.h"
 
@@ -18,8 +20,13 @@ void test_get()
 {
     char* body = NULL;
     size_t bodylen = 0;
-    int ret = Get("http://47.115.57.81/web", &body, &bodylen);
-    //printf("%d\n%*s\n%zd\n", ret, body, bodylen);
+    int ret = Get("http://www.gongluck.icu/web", &body, &bodylen);
+    //printf("%d\n%s\n%zd\n", ret, body, bodylen);
+    static int t = 0;
+    g_mutex.lock();
+    printf("%d\n", ++t);
+    g_mutex.unlock();
+    //std::this_thread::sleep_for(std::chrono::microseconds(10));
     Release(&body);
 }
 
@@ -29,7 +36,7 @@ void test_post()
     char* values[] = {"gongluck", "testtest"};
     char* body = NULL;
     size_t bodylen = 0;
-    int ret = Post("http://47.115.57.81/api/regist", keys, values, 2, &body, &bodylen);
+    int ret = Post("http://www.gongluck.icu/api/regist", keys, values, 2, &body, &bodylen);
     //printf("%d\n%s\n%zd\n", ret, body, bodylen);
     Release(&body);
 }
