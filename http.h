@@ -26,6 +26,11 @@ typedef struct { const char *p; ptrdiff_t n; } _GoString_;
 #include <string.h>
 #include "cghttp.h"
 
+static char* parse(char** datas, size_t index)
+{
+    return datas[index];
+}
+
 #line 1 "cgo-generated-wrapper"
 
 
@@ -80,6 +85,8 @@ extern "C" {
 extern void Release(char** p0);
 
 extern int Get(char* p0, char** p1, size_t* p2);
+
+extern int Post(char* p0, char** p1, char** p2, size_t p3, char** p4, size_t* p5);
 
 #ifdef __cplusplus
 }

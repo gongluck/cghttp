@@ -24,3 +24,4 @@ x64
 *.obj
 *.ilk
 *.lib
+__debug_bin
